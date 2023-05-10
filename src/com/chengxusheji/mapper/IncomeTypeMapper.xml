@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.IncomeTypeMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加收入分类记录 -->
+	<insert id="addIncomeType" parameterType="incomeType">
+		insert into t_incomeType(typeName) values 
+		(#{typeName})
+	</insert>
+
+	<!-- 按照查询条件分页查询收入分类记录 -->
+	<select id="queryIncomeType" resultMap="incomeTypeMap" >
+		select t_incomeType.* from t_incomeType ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="incomeTypeMap" type="incomeType">
+        <id property="typeId" column="typeId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有收入分类记录 -->
+	<select id="queryIncomeTypeList" resultMap="incomeTypeMap" >
+		select t_incomeType.* from t_incomeType ${where}
+	</select>
+
+    <!-- 按照查询条件的收入分类记录数 -->
+	<select id="queryIncomeTypeCount" resultType="int">
+		select count(*) from t_incomeType ${where}
+	</select>
+
+	<!-- 根据主键查询某个收入分类记录 -->
+	<select id="getIncomeType" parameterType="int" resultMap="incomeTypeMap">
+		select * from t_incomeType where t_incomeType.typeId = #{typeId}
+	</select>
+
+	<!-- 更新收入分类记录 -->
+	<update id="updateIncomeType" parameterType="incomeType">
+		update t_incomeType set typeName=#{typeName} where typeId = #{typeId}
+	</update>
+
+	<!-- 删除收入分类记录 -->
+	<delete id="deleteIncomeType" parameterType="int">
+		delete from t_incomeType where typeId=#{typeId}
+	</delete>
+
+</mapper>

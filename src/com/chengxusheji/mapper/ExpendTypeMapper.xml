@@ -1,0 +1,48 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.ExpendTypeMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加支出类型记录 -->
+	<insert id="addExpendType" parameterType="expendType">
+		insert into t_expendType(expendTypeName) values 
+		(#{expendTypeName})
+	</insert>
+
+	<!-- 按照查询条件分页查询支出类型记录 -->
+	<select id="queryExpendType" resultMap="expendTypeMap" >
+		select t_expendType.* from t_expendType ${where} limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="expendTypeMap" type="expendType">
+        <id property="expendTypeId" column="expendTypeId" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有支出类型记录 -->
+	<select id="queryExpendTypeList" resultMap="expendTypeMap" >
+		select t_expendType.* from t_expendType ${where}
+	</select>
+
+    <!-- 按照查询条件的支出类型记录数 -->
+	<select id="queryExpendTypeCount" resultType="int">
+		select count(*) from t_expendType ${where}
+	</select>
+
+	<!-- 根据主键查询某个支出类型记录 -->
+	<select id="getExpendType" parameterType="int" resultMap="expendTypeMap">
+		select * from t_expendType where t_expendType.expendTypeId = #{expendTypeId}
+	</select>
+
+	<!-- 更新支出类型记录 -->
+	<update id="updateExpendType" parameterType="expendType">
+		update t_expendType set expendTypeName=#{expendTypeName} where expendTypeId = #{expendTypeId}
+	</update>
+
+	<!-- 删除支出类型记录 -->
+	<delete id="deleteExpendType" parameterType="int">
+		delete from t_expendType where expendTypeId=#{expendTypeId}
+	</delete>
+
+</mapper>

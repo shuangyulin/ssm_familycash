@@ -1,0 +1,51 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace命名空间，为了对sql语句进行隔离，方便管理，mapper开发dao方式，使用namespace有特殊作用  
+mapper代理开发时将namespace指定为mapper接口的全限定名  
+ -->
+<mapper namespace="com.chengxusheji.mapper.IncomeMapper"> 
+<!--在mapper.xml文件中配置很多的sql语句，执行每个sql语句时，封装为MappedStatement对象 
+mapper.xml以statement为单位管理sql语句  
+ -->
+	<!-- 添加收入记录 -->
+	<insert id="addIncome" parameterType="income">
+		insert into t_income(incomeTypeObj,incomeFrom,payWayObj,payAccount,incomeMoney,incomeDate,userObj,incomeMemo) values 
+		(#{incomeTypeObj.typeId},#{incomeFrom},#{payWayObj.payWayId},#{payAccount},#{incomeMoney},#{incomeDate},#{userObj.user_name},#{incomeMemo})
+	</insert>
+
+	<!-- 按照查询条件分页查询收入记录 -->
+	<select id="queryIncome" resultMap="incomeMap" >
+		select t_income.* from t_income,t_incomeType,t_payWay,t_userInfo ${where} and t_income.incomeTypeObj = t_incomeType.typeId and t_income.payWayObj = t_payWay.payWayId and t_income.userObj = t_userInfo.user_name limit #{startIndex},#{pageSize}
+	</select>
+	<resultMap id="incomeMap" type="income">
+        <id property="incomeId" column="incomeId" />
+        <association property="incomeTypeObj" column="incomeTypeObj" select="com.chengxusheji.mapper.IncomeTypeMapper.getIncomeType" />
+        <association property="payWayObj" column="payWayObj" select="com.chengxusheji.mapper.PayWayMapper.getPayWay" />
+        <association property="userObj" column="userObj" select="com.chengxusheji.mapper.UserInfoMapper.getUserInfo" />
+    </resultMap>
+
+    <!-- 按照查询条件查询所有收入记录 -->
+	<select id="queryIncomeList" resultMap="incomeMap" >
+		select t_income.* from t_income,t_incomeType,t_payWay,t_userInfo ${where} and t_income.incomeTypeObj = t_incomeType.typeId and t_income.payWayObj = t_payWay.payWayId and t_income.userObj = t_userInfo.user_name
+	</select>
+
+    <!-- 按照查询条件的收入记录数 -->
+	<select id="queryIncomeCount" resultType="int">
+		select count(*) from t_income,t_incomeType,t_payWay,t_userInfo ${where} and t_income.incomeTypeObj = t_incomeType.typeId and t_income.payWayObj = t_payWay.payWayId and t_income.userObj = t_userInfo.user_name
+	</select>
+
+	<!-- 根据主键查询某个收入记录 -->
+	<select id="getIncome" parameterType="int" resultMap="incomeMap">
+		select * from t_income where t_income.incomeId = #{incomeId}
+	</select>
+
+	<!-- 更新收入记录 -->
+	<update id="updateIncome" parameterType="income">
+		update t_income set incomeTypeObj=#{incomeTypeObj.typeId},incomeFrom=#{incomeFrom},payWayObj=#{payWayObj.payWayId},payAccount=#{payAccount},incomeMoney=#{incomeMoney},incomeDate=#{incomeDate},userObj=#{userObj.user_name},incomeMemo=#{incomeMemo} where incomeId = #{incomeId}
+	</update>
+
+	<!-- 删除收入记录 -->
+	<delete id="deleteIncome" parameterType="int">
+		delete from t_income where incomeId=#{incomeId}
+	</delete>
+
+</mapper>
